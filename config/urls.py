@@ -31,7 +31,7 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path('plagiarism-model/', include('plagiarism_model.api_router')),
+    # path('plagiarism-model/', include('plagiarism_model.api_router')),
 
 
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
