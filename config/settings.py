@@ -20,7 +20,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-env.read_env(str(BASE_DIR / '.envs' / '.local'))
+env.read_env()
 
 
 # Quick-start development settings - unsuitable for production
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     # Local
     'plagiarism_model',
     'core',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -182,13 +183,13 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
-# AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "users.User"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-# LOGIN_REDIRECT_URL = "users:redirect"
+LOGIN_REDIRECT_URL = "users:redirect"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
-# LOGIN_URL = "account_login"
+LOGIN_URL = "account_login"
 
 
 # # EMAIL
@@ -267,7 +268,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_NAME": "HTTP_AUTHTOKEN",
     "USER_ID_FIELD": "guid",
     "USER_ID_CLAIM": "guid",
-    # "USER_AUTHENTICATION_RULE": "users.custom_auth.custom_user_authentication_rule",
+    "USER_AUTHENTICATION_RULE": "users.custom_auth.custom_user_authentication_rule",
 
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
@@ -279,10 +280,19 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=120) if DEBUG else timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
-    # "TOKEN_OBTAIN_SERIALIZER": "users.jwt.CustomTokenObtainPairSerializer",
+    "TOKEN_OBTAIN_SERIALIZER": "users.jwt.CustomTokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+# Secrets
+# ------------------------------------------------------------------------------
+
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+DEFAULT_FROM_NAME = env('DEFAULT_FROM_NAME')
+
+FRONTEND_URL = env('FRONTEND_URL')
