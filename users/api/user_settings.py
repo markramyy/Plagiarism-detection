@@ -18,8 +18,6 @@ logger = logging.getLogger(__name__)
 
 class UserViewSet(BaseViewSet):
     queryset = User.objects.all()
-    throttle_classes = [ScopedRateThrottle]
-    throttle_scope = 'User'
 
     def get_serializer_class(self):
         if self.action == 'password_reset':
