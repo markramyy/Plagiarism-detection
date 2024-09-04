@@ -32,6 +32,7 @@ urlpatterns = [
 
 urlpatterns += [
     # path('plagiarism-model/', include('plagiarism_model.api_router')),
+    path("auth/", include("config.auth_router")),
     path("users/", include("users.api_router")),
 
 
