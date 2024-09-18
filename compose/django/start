@@ -1,0 +1,7 @@
+#!/bin/bash
+
+./manage.py makemigrations
+./manage.py migrate
+./manage.py load_mock
+
+exec uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload --reload-include '*.html' --log-level debug

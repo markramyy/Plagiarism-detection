@@ -1,0 +1,83 @@
+version: '3'
+
+volumes:
+  plg_det_local_postgres_data: {}
+  plg_det_local_postgres_data_backups: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: compose/django/Dockerfile
+    image: plg_det_local_django
+    container_name: plg_det_local_django
+    depends_on:
+      - postgres
+      - mailpit
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.env
+    ports:
+      - '8000:8000'
+    command: /start
+    networks:
+      - plg_det_local_network
+
+  postgres:
+    image: postgres:13
+    container_name: plg_det_local_postgres
+    volumes:
+      - plg_det_local_postgres_data:/var/lib/postgresql/data
+      - plg_det_local_postgres_data_backups:/backups
+    env_file:
+      - ./.env
+    networks:
+      - plg_det_local_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: plg_det_local_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: test
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - plg_det_local_network
+
+  mailpit:
+    image: axllent/mailpit:v1.8
+    container_name: plg_det_local_mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - plg_det_local_network
+
+  redis:
+    image: redis:latest
+    container_name: plg_det_local_redis
+    ports:
+      - '6379:6379'
+    networks:
+      - plg_det_local_network
+
+  celerybeat:
+    <<: *django
+    image: plg_det_local_celerybeat
+    container_name: plg_det_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+      - mailpit
+    ports: []
+    command: /start-celerybeat
+    networks:
+      - plg_det_local_network
+
+networks:
+  plg_det_local_network:
+    driver: bridge
