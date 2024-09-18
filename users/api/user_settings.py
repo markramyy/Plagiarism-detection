@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 
 from core.base_viewset import BaseViewSet
 from users.models import User
@@ -8,7 +9,6 @@ from users.serializers import (
     PasswordResetSerializer, ValidatePasswordSerializer,
     RequestNewPasswordSerializer
 )
-from rest_framework.permissions import AllowAny
 
 import logging
 

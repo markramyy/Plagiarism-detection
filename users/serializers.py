@@ -7,6 +7,30 @@ from users.models import User
 from users.tasks import send_password_request_email
 
 
+class UserSignupSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+    password_confirm = serializers.CharField(write_only=True, min_length=8)
+
+    class Meta:
+        model = User
+        fields = [
+            'username', 'first_name', 'last_name',
+            'email', 'password', 'password_confirm'
+        ]
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password_confirm']:
+            raise serializers.ValidationError({
+                "password": "Password fields didn't match."
+            })
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop('password_confirm')
+        user = User.objects.create_user(**validated_data)
+        return user
+
+
 class GetUserSerializer(serializers.Serializer):
     email = serializers.EmailField()
     first_name = serializers.CharField()
