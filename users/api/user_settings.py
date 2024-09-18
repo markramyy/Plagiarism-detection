@@ -1,5 +1,4 @@
 from rest_framework.response import Response
-from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.decorators import action
 
 from core.base_viewset import BaseViewSet
