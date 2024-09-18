@@ -263,3 +263,5 @@ pyrightconfig.json
 # ignore files
 *.pem
 .envs/
+
+uploads/
