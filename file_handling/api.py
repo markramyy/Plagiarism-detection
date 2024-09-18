@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 
 from core.base_viewset import BaseViewSet
 from file_handling.models import UploadedFile
+from rest_framework.parsers import MultiPartParser
 from file_handling.serializers import (
     UploadedFileSerializer, ZipFolderSerializer,
     UploadedFileListSerializer, UploadedFileDetailSerializer
@@ -110,7 +111,7 @@ class FileUploadViewSet(BaseViewSet):
             status=204
         )
 
-    @action(detail=False, methods=['POST'], url_path='upload-file', url_name='upload-file')
+    @action(detail=False, methods=['POST'], url_path='upload-file', url_name='upload-file', parser_classes=[MultiPartParser])
     def upload_file(self, request):
         serializer = self.get_serializer_class()(data=request.data)
 
@@ -133,7 +134,7 @@ class FileUploadViewSet(BaseViewSet):
             status=400
         )
 
-    @action(detail=False, methods=['POST'], url_path='upload-zip', url_name='upload-zip')
+    @action(detail=False, methods=['POST'], url_path='upload-zip', url_name='upload-zip', parser_classes=[MultiPartParser])
     def upload_zip(self, request):
         zip_serializer = self.get_serializer_class()(data=request.data)
 

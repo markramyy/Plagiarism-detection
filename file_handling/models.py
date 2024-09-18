@@ -5,6 +5,7 @@ from core.models import DBBase
 
 class ZipFolder(DBBase):
     name = models.CharField(max_length=255)
+    zip_file = models.FileField(upload_to='zip_folders/')
     processed = models.BooleanField(default=False)
 
     user = models.ForeignKey(

@@ -27,7 +27,7 @@ class UploadedFileDetailSerializer(BaseSerializer):
 class ZipFolderSerializer(BaseSerializer):
     class Meta:
         model = ZipFolder
-        fields = ['guid', 'name']
+        fields = ['guid', 'name', 'zip_file']
         read_only_fields = ['guid']
 
 
