@@ -50,3 +50,15 @@ uvicorn==0.30.6
 vine==5.1.0
 watchfiles==0.24.0
 wcwidth==0.2.13
+
+# DEEP LEARNING LIBRARIES
+python-docx
+PyPDF2
+nbformat
+tensorflow
+pandas
+numpy
+nltk
+gensim
+matplotlib
+scikit-learn
