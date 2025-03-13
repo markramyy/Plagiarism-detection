@@ -62,3 +62,4 @@ nltk
 gensim
 matplotlib
 scikit-learn
+tqdm
