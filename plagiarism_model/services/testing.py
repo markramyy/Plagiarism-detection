@@ -11,6 +11,9 @@ import tensorflow as tf  # type: ignore
 from tensorflow.keras.layers import LSTM, Dense, Dropout, BatchNormalization, Bidirectional  # type: ignore
 import nbformat  # type: ignore
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class PlagiarismDetector:
     def __init__(self, model_dir="plagiarism_model",
@@ -28,7 +31,7 @@ class PlagiarismDetector:
                     self.max_length = metadata.get("max_length", 20)
                     self.word2vec_path = metadata.get("word2vec_path", os.path.join(model_dir, "word2vec_model.bin"))
             except Exception as e:
-                print(f"Warning: Could not load metadata: {str(e)}")
+                logger.error(f"Warning: Could not load metadata: {str(e)}")
 
         # Override with explicit parameters if provided
         self.max_length = max_length or getattr(self, 'max_length', 20)
@@ -61,7 +64,6 @@ class PlagiarismDetector:
 
     def _recreate_model_architecture(self, vector_size=100):
         """Recreate the model architecture to match the original training model"""
-        print("Recreating model architecture to match the original training model")
 
         # Text input branch
         text_input = tf.keras.Input(shape=(self.max_length * 2, vector_size), name='text_input')
@@ -126,7 +128,6 @@ class PlagiarismDetector:
         """Load the required models for plagiarism detection"""
         try:
             # Load Word2Vec model
-            print(f"Loading Word2Vec from: {self.word2vec_path}")
             self.word2vec_model = Word2Vec.load(self.word2vec_path)
 
             # Get vector size from the Word2Vec model
@@ -140,10 +141,8 @@ class PlagiarismDetector:
                 # Try different weight loading approaches based on file extension
                 if os.path.exists(self.model_path):
                     if self.model_path.endswith('.h5'):
-                        print(f"Loading model weights from: {self.model_path}")
                         self.model.load_weights(self.model_path)
                     elif os.path.isdir(self.model_path):
-                        print(f"Loading model from SavedModel directory: {self.model_path}")
                         temp_model = tf.keras.models.load_model(
                             self.model_path,
                             custom_objects={
@@ -153,14 +152,11 @@ class PlagiarismDetector:
                         )
                         self.model.set_weights(temp_model.get_weights())
                     else:
-                        print("Model weights not found, using untrained model")
+                        logger.error("Model weights not found, using untrained model")
                 else:
-                    print("Model path doesn't exist, using untrained model")
+                    logger.error("Model path doesn't exist, using untrained model")
             except Exception as e:
-                print(f"Warning: Could not load model weights: {str(e)}")
-                print("Using untrained model (predictions will be random)")
-
-            print("Models loaded successfully")
+                logger.error(f"Warning: Could not load model weights: {str(e)}")
 
         except Exception as e:
             print(f"Error loading models: {str(e)}")
