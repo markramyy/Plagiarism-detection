@@ -35,6 +35,7 @@ urlpatterns += [
     path("auth/", include("config.auth_router")),
     path("users/", include("users.api_router")),
     path("files/", include("file_handling.api_router")),
+    path("plagiarism/", include("plagiarism_backend.api_router")),
 
 
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
