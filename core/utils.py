@@ -31,3 +31,16 @@ def extract_text_from_zip(zip_instance):
     except Exception as e:
         logger.error(f"Error extracting text from ZIP: {str(e)}")
         return
+
+
+def determine_file_type(extension):
+    if extension == '.pdf':
+        return 'pdf'
+    elif extension == '.txt':
+        return 'txt'
+    elif extension == '.docx':
+        return 'doc'
+    elif extension == '.ipynb':
+        return 'ipynb'
+    else:
+        return 'txt'  # Default fallback
