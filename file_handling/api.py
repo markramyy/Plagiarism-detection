@@ -1,14 +1,10 @@
 from rest_framework.response import Response
-from rest_framework.decorators import action
 
 from core.base_viewset import BaseViewSet
 from file_handling.models import UploadedFile
-from rest_framework.parsers import MultiPartParser
 from file_handling.serializers import (
-    UploadedFileSerializer, ZipFolderSerializer,
     UploadedFileListSerializer, UploadedFileDetailSerializer
 )
-from file_handling.tasks import process_file
 
 import logging
 
@@ -23,10 +19,6 @@ class FileUploadViewSet(BaseViewSet):
             return UploadedFileListSerializer
         elif self.action == 'retrieve':
             return UploadedFileDetailSerializer
-        elif self.action == 'upload_file':
-            return UploadedFileSerializer
-        elif self.action == 'upload_zip':
-            return ZipFolderSerializer
 
         return UploadedFileListSerializer
 
@@ -109,65 +101,4 @@ class FileUploadViewSet(BaseViewSet):
                 "data": [],
             },
             status=204
-        )
-
-    @action(detail=False, methods=['POST'], url_path='upload-file', url_name='upload-file', parser_classes=[MultiPartParser])
-    def upload_file(self, request):
-        serializer = self.get_serializer_class()(data=request.data)
-
-        if serializer.is_valid():
-            uploaded_file = serializer.save(user=request.user)
-            process_file.delay(uploaded_file.guid)
-
-            return Response(
-                {
-                    "message": "File uploaded and processing started.",
-                    "data": serializer.data,
-                },
-                status=201
-            )
-        return Response(
-            {
-                "message": "Something went wrong.",
-                "data": serializer.errors,
-            },
-            status=400
-        )
-
-    @action(detail=False, methods=['POST'], url_path='upload-zip', url_name='upload-zip', parser_classes=[MultiPartParser])
-    def upload_zip(self, request):
-        zip_serializer = self.get_serializer_class()(data=request.data)
-
-        if zip_serializer.is_valid():
-            zip_folder = zip_serializer.save(user=request.user)
-            files_to_create = []
-
-            for file in request.FILES.getlist('files'):
-                if file.name.endswith('.pdf'):
-                    files_to_create.append(UploadedFile(
-                        user=request.user,
-                        file=file,
-                        file_type='pdf',
-                        zip_folder=zip_folder
-                    ))
-
-            UploadedFile.objects.bulk_create(files_to_create)
-
-            # Process files in the background
-            for uploaded_file in files_to_create:
-                process_file.delay(uploaded_file.guid)
-
-            return Response(
-                {
-                    "message": "ZIP uploaded and processing started.",
-                    "data": zip_serializer.data,
-                },
-                status=201
-            )
-        return Response(
-            {
-                "message": "Something went wrong.",
-                "data": zip_serializer.errors,
-            },
-            status=400
         )

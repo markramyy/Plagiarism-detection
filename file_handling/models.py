@@ -19,7 +19,12 @@ class ZipFolder(DBBase):
 
 class UploadedFile(DBBase):
     file = models.FileField(upload_to='uploads/')
-    file_type = models.CharField(max_length=10, choices=(('pdf', 'PDF'),))
+    file_type = models.CharField(max_length=10, choices=(
+        ('pdf', 'PDF'),
+        ('txt', 'TXT'),
+        ('doc', 'DOC'),
+        ('ipynb', 'IPYNB'),
+    ))
     processed = models.BooleanField(default=False)
 
     user = models.ForeignKey(
