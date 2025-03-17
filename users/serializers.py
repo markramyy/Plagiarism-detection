@@ -14,15 +14,20 @@ class UserSignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'username', 'first_name', 'last_name',
-            'email', 'password', 'password_confirm'
+            'username', 'email', 'password', 'password_confirm'
         ]
 
     def validate(self, attrs):
+        if User.objects.filter(username=attrs['username']).exists():
+            raise serializers.ValidationError({
+                "username": "Username already exists."
+            })
+
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError({
                 "password": "Password fields didn't match."
             })
+
         return attrs
 
     def create(self, validated_data):
