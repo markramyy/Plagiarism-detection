@@ -313,7 +313,7 @@ SIMPLE_JWT = {
     "LEEWAY": 0,
 
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_HEADER_NAME": "HTTP_AUTHTOKEN",
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "guid",
     "USER_ID_CLAIM": "guid",
     "USER_AUTHENTICATION_RULE": "users.custom_auth.custom_user_authentication_rule",
